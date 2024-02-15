@@ -18,10 +18,10 @@ import java.util.Collection;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class Customers implements UserDetails {
+public class Users implements UserDetails{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long customerId;
+    private Long userId;
     @NotNull
     @Column(unique = true)
     private String accountNumber;
@@ -30,11 +30,11 @@ public class Customers implements UserDetails {
     @NotNull
     private String fullName;
     @NotNull
-    private String password1;
+    private String password;
 
     @CreationTimestamp
     @Column(updatable = false)
-    private LocalDateTime created_at;
+    private LocalDateTime createdAt;
 
 
     @Override
@@ -44,7 +44,7 @@ public class Customers implements UserDetails {
 
     @Override
     public String getPassword() {
-        return password1;
+        return password;
     }
 
     @Override

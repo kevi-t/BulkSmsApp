@@ -17,10 +17,15 @@ public class Message {
     @Column(columnDefinition = "TEXT")
     private String msg;
     @NotNull
-    private String  recipientNumber;
+    private String recipientNumber;
+    @NotNull
+    private String senderAccountNumber;
+    @NotNull
     private String status; // e.g., "SENT", "FAILED"
 
     @CreationTimestamp
     @Column(updatable = false)
-    private LocalDateTime created_at;
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
+    private LocalDateTime scheduleAt;
 }

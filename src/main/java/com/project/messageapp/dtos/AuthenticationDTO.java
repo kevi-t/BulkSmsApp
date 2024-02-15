@@ -1,5 +1,6 @@
 package com.project.messageapp.dtos;
 
+import jakarta.validation.constraints.NotEmpty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -11,9 +12,9 @@ import org.springframework.validation.annotation.Validated;
 @NoArgsConstructor
 @Builder
 @AllArgsConstructor
-public class CustomersDTO {
-    private Long customerId;
+public class AuthenticationDTO {
+    @NotEmpty(message = "Field accountNumber should is empty")
     private String accountNumber;
-    private String phoneNumber;
-    private String fullName;
+    @NotEmpty(message = "Field password is empty")
+    private String password;
 }

@@ -1,6 +1,6 @@
 package com.project.messageapp.services;
 
-import com.project.messageapp.repositories.CustomersRepository;
+import com.project.messageapp.repositories.UsersRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -10,9 +10,9 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class UserDetailsService implements org.springframework.security.core.userdetails.UserDetailsService {
 
-    private final CustomersRepository customersRepository;
+    private final UsersRepository usersRepository;
     @Override
     public UserDetails loadUserByUsername(String accountNumber) throws UsernameNotFoundException {
-        return customersRepository.findCustomersByAccountNumber(accountNumber);
+        return usersRepository.findUsersByAccountNumber(accountNumber);
     }
 }
