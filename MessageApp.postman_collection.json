@@ -1,0 +1,159 @@
+{
+	"info": {
+		"_postman_id": "8aa53a40-5a9f-414e-8ea1-9906f92aa38c",
+		"name": "MessageApp",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json",
+		"_exporter_id": "22113006"
+	},
+	"item": [
+		{
+			"name": "Registration",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"accountNumber\": \"KE37082304\",\r\n    \"phoneNumber\": \"+254792526394\",\r\n    \"fullName\": \"Kevin Wafula\",\r\n    \"password\": \"java\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "localhost:9000/api/msgApp/register"
+			},
+			"response": []
+		},
+		{
+			"name": "Login",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"accountNumber\": \"KE37082305\",\r\n    \"password\": \"java\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "localhost:9000/api/msgApp/login"
+			},
+			"response": []
+		},
+		{
+			"name": "TwilioSmsRequest",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": {
+						"token": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJLRTM3MDgyMzA1IiwiaWF0IjoxNzA4MzI0MDk1LCJleHAiOjE3MDgzMjc2OTV9.qfIRrAAQQ53-IhTKnCBiGPIsQCPaygP5RkVu0RX3og8"
+					}
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"receiverPhoneNumber\": \"+254792526394\",\r\n    \"message\": \"Dear customer please pay your subscription\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "localhost:9000/api/msgApp/sendSms"
+			},
+			"response": []
+		},
+		{
+			"name": "ComposeMessages",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": {
+						"token": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJLRTM3MDgyMzA1IiwiaWF0IjoxNzA4MzI0MDk1LCJleHAiOjE3MDgzMjc2OTV9.qfIRrAAQQ53-IhTKnCBiGPIsQCPaygP5RkVu0RX3og8"
+					}
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"message\": \"Dear customer you will be doing some system maintanance on 10/02/2024 from 11:00 pm to 5:00 am we apologize for the inconviences \"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "localhost:9000/api/msgApp/composeMessage"
+			},
+			"response": []
+		},
+		{
+			"name": "GenericMessage",
+			"request": {
+				"method": "POST",
+				"header": []
+			},
+			"response": []
+		},
+		{
+			"name": "SendMessageToUsersFromFile",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": {
+						"token": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJLRTM3MDgyMzA1IiwiaWF0IjoxNzA4MzQ4Njk0LCJleHAiOjE3MDgzNTIyOTR9.QOtoZWzthJAMiSQJMX3s1G5XxKwAreM03JtHKzW-eyU"
+					}
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"message\": \"Dear customer..,Your meter number ..is going to be Disconnected pay early to avoid inconveniences\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:9000/api/msgApp/sendFileMessage",
+					"host": [
+						"localhost"
+					],
+					"port": "9000",
+					"path": [
+						"api",
+						"msgApp",
+						"sendFileMessage"
+					],
+					"query": [
+						{
+							"key": "filePath",
+							"value": "C:/Users/Admin/Desktop/Pdfs/Projects/Notes/Employee.xlsx",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "ViewMessages",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": {
+						"token": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJLRTM3MDgyMzA1IiwiaWF0IjoxNzA4MzQ4Njk0LCJleHAiOjE3MDgzNTIyOTR9.QOtoZWzthJAMiSQJMX3s1G5XxKwAreM03JtHKzW-eyU"
+					}
+				},
+				"method": "GET",
+				"header": [],
+				"url": "localhost:9000/api/msgApp/viewMessages"
+			},
+			"response": []
+		}
+	]
+}

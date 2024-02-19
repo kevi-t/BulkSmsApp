@@ -1,16 +1,19 @@
 package com.project.messageapp.controllers;
 
 import com.project.messageapp.dtos.MessageDTO;
-import com.project.messageapp.dtos.SmsRequest;
+import com.project.messageapp.dtos.MsgDTO;
+import com.project.messageapp.responses.UniversalResponse;
 import com.project.messageapp.services.MessageService;
-import com.project.messageapp.services.TwilioService;
+import com.project.messageapp.twilio.SmsRequest;
+import com.project.messageapp.twilio.TwilioService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @RestController
-@RequestMapping("/api/msgApp/sms")
+@RequestMapping("/api/msgApp/")
 public class MessageController {
     private final MessageService messageService;
     private final TwilioService twilioService;
@@ -21,23 +24,43 @@ public class MessageController {
         this.twilioService = twilioService;
     }
 
-    @GetMapping("/search-file")
-    public List<String> fetchFileData(@RequestParam String filePath) {
-        return messageService.fetchFileData(filePath);
+    @PostMapping("/sendSms")
+    public ResponseEntity<UniversalResponse> sendSms(@RequestBody @Valid SmsRequest request) {
+        try {
+            return ResponseEntity.ok(twilioService.sendSms(request));
+        }
+        catch (Exception exception){
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
     }
-    @PostMapping
-    public void getUserSms(){
 
+    @PostMapping("/composeMessage")
+    public ResponseEntity<UniversalResponse> sendMessages(@RequestBody MessageDTO request, @RequestHeader("Authorization") String token) {
+        try {
+            return ResponseEntity.ok( messageService.sendMessageToMultipleNumbers(token,request.getRecipientNumbers(), request.getMessage()));
+        }
+        catch (Exception exception){
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
     }
 
-    @PostMapping("/send-sms")
-    public String sendSms(@RequestBody SmsRequest smsRequest) {
-        twilioService.sendSms(smsRequest.getTo(), smsRequest.getMessage());
-        return "SMS sent successfully!";
+    @PostMapping("/sendFileMessage")
+    public ResponseEntity<UniversalResponse> sendFileMessages(@RequestBody MsgDTO request, @RequestHeader("Authorization") String token) {
+        try {
+            return ResponseEntity.ok( messageService.sendFileMessage(token,request.getMessage()));
+        }
+        catch (Exception exception){
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
     }
-    @PostMapping("/send-messages")
-    public void sendMessages(@RequestBody MessageDTO request) {
-        messageService.sendMessageToMultipleNumbers(request.getRecipientNumbers(), request.getMessage());
+    @GetMapping("/viewMessages")
+    public ResponseEntity<UniversalResponse> viewMessages() {
+        try {
+            return ResponseEntity.ok(messageService.viewMessages());
+        }
+        catch (Exception exception){
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
     }
 
 }

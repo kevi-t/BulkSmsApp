@@ -6,12 +6,17 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.validation.annotation.Validated;
 
+import java.time.LocalDateTime;
+
 @Validated
 @Data
 @NoArgsConstructor
 @Builder
 @AllArgsConstructor
-public class MessageDTO {
-    private String [] recipientNumbers;
-    private String message;
+
+public class FilteredList {
+    private String msg;
+    private String recipientNumber;
+    private String senderAccountNumber;
+    private LocalDateTime createdAt;
 }

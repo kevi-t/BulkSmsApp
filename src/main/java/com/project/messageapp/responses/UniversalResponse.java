@@ -11,6 +11,6 @@ import org.springframework.stereotype.Component;
 @NoArgsConstructor
 public class UniversalResponse {
     private String message;
-    private Object data;
     private String status;
+    private Object data;
 }
