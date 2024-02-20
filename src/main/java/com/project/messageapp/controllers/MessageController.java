@@ -3,6 +3,7 @@ package com.project.messageapp.controllers;
 import com.project.messageapp.dtos.MessageDTO;
 import com.project.messageapp.dtos.MsgDTO;
 import com.project.messageapp.responses.UniversalResponse;
+import com.project.messageapp.services.CustomMessageService;
 import com.project.messageapp.services.MessageService;
 import com.project.messageapp.twilio.SmsRequest;
 import com.project.messageapp.twilio.TwilioService;
@@ -17,11 +18,13 @@ import org.springframework.web.bind.annotation.*;
 public class MessageController {
     private final MessageService messageService;
     private final TwilioService twilioService;
+    private final CustomMessageService customMessageService;
 
     @Autowired
-    public MessageController(MessageService messageService, TwilioService twilioService) {
+    public MessageController(MessageService messageService, TwilioService twilioService, CustomMessageService customMessageService) {
         this.messageService = messageService;
         this.twilioService = twilioService;
+        this.customMessageService = customMessageService;
     }
 
     @PostMapping("/sendSms")
@@ -48,6 +51,15 @@ public class MessageController {
     public ResponseEntity<UniversalResponse> sendFileMessages(@RequestBody MsgDTO request, @RequestHeader("Authorization") String token) {
         try {
             return ResponseEntity.ok( messageService.sendFileMessage(token,request.getMessage()));
+        }
+        catch (Exception exception){
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+    }
+    @PostMapping("/customMessage")
+    public ResponseEntity<UniversalResponse> sendCustomMessageToUser(@RequestHeader("Authorization") String token) {
+        try {
+            return ResponseEntity.ok(customMessageService.sendCustomMessageToUsers(token));
         }
         catch (Exception exception){
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
