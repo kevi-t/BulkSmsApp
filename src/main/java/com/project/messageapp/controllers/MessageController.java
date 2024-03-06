@@ -11,10 +11,12 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/msgApp/")
+@Validated
 public class MessageController {
     private final MessageService messageService;
     private final TwilioService twilioService;
@@ -38,9 +40,9 @@ public class MessageController {
     }
 
     @PostMapping("/composeMessage")
-    public ResponseEntity<UniversalResponse> sendMessages(@RequestBody MessageDTO request, @RequestHeader("Authorization") String token) {
+    public ResponseEntity<UniversalResponse> sendMessages(@RequestBody @Valid MessageDTO request, @RequestHeader("Authorization") String token) {
         try {
-            return ResponseEntity.ok( messageService.sendMessageToMultipleNumbers(token,request.getRecipientNumbers(), request.getMessage()));
+            return ResponseEntity.ok( messageService.sendMessageToMultipleNumbers(token,request));
         }
         catch (Exception exception){
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -69,6 +71,16 @@ public class MessageController {
     public ResponseEntity<UniversalResponse> viewMessages() {
         try {
             return ResponseEntity.ok(messageService.viewMessages());
+        }
+        catch (Exception exception){
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @GetMapping("/viewBatches")
+    public ResponseEntity<UniversalResponse> viewBatches() {
+        try {
+            return ResponseEntity.ok(messageService.viewBatches());
         }
         catch (Exception exception){
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);

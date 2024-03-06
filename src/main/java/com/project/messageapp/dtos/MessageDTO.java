@@ -1,5 +1,6 @@
 package com.project.messageapp.dtos;
 
+import jakarta.validation.constraints.NotEmpty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -12,6 +13,10 @@ import org.springframework.validation.annotation.Validated;
 @Builder
 @AllArgsConstructor
 public class MessageDTO {
-    private String [] recipientNumbers;
+    @NotEmpty(message = "Field description is empty")
+    private String messageDescription;
+    @NotEmpty(message = "Field description is empty")
     private String message;
+//    private String [] recipientNumbers;
+//    private String message;
 }

@@ -18,24 +18,29 @@ import java.util.Collection;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class Users implements UserDetails{
+public class Users implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long userId;
+
     @NotNull
     @Column(unique = true)
     private String accountNumber;
+
     @NotNull
     private String phoneNumber;
+
     @NotNull
     private String fullName;
+
+    private String email;
+
     @NotNull
     private String password;
 
     @CreationTimestamp
     @Column(updatable = false)
     private LocalDateTime createdAt;
-
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
