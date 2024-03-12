@@ -1,5 +1,6 @@
 package com.project.messageapp.services;
 
+
 import com.project.messageapp.dtos.FilteredList;
 import com.project.messageapp.dtos.MessageDTO;
 import com.project.messageapp.models.Batch;
@@ -50,6 +51,7 @@ public class MessageService {
                 msg.setRecipientNumber(phoneNumber);
                 msg.setMsg(request.getMessage());
                 msg.setBatchId(batch.getBatchId()); // Set the associated batch for the message
+                msg.setCreatedAt(LocalDateTime.now());
                 msg.setStatus("DRAFT");
                 messageRepository.save(msg);
 

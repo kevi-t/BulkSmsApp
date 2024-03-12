@@ -71,7 +71,7 @@ public class SecurityConfiguration  {
               .and()
               .authorizeHttpRequests()
               .requestMatchers("/api/auth/getUsers")
-              .hasAuthority("Admin")
+              .hasAuthority("ADIM")
               .anyRequest().authenticated();
         http.authenticationProvider(authenticationProvider());
         http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
