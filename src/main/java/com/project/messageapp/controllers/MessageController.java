@@ -15,6 +15,10 @@ import org.springframework.web.bind.annotation.*;
 @AllArgsConstructor
 public class MessageController {
     private final MessageService messageService;
+    @GetMapping("/test")
+    public String Test(){
+        return "connected";
+    }
    // private final CustomMessageService customMessageService;
 
 //    @Autowired

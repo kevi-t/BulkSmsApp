@@ -32,9 +32,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         else if (request.getServletPath().equals("/api/msgApp/login") ){
             filterChain.doFilter(request, response);
         }
-        else if (request.getServletPath().equals("/api/msgApp/sendFileMessage")) {
-            filterChain.doFilter(request, response);
-        }
+//        else if (request.getServletPath().equals("/api/msgApp/sendFileMessage")) {
+//            filterChain.doFilter(request, response);
+//        }
         else {
 
             // If the servlet path matches, continue with the filter chain
