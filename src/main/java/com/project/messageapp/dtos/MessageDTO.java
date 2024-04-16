@@ -13,10 +13,8 @@ import org.springframework.validation.annotation.Validated;
 @Builder
 @AllArgsConstructor
 public class MessageDTO {
-    @NotEmpty(message = "Field description is empty")
-    private String messageDescription;
-    @NotEmpty(message = "Field description is empty")
+//    @NotEmpty(message = "Field description is empty")
+//    private String messageDescription;
+    @NotEmpty(message = "Field message is empty")
     private String message;
-//    private String [] recipientNumbers;
-//    private String message;
 }

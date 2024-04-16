@@ -49,18 +49,6 @@ public class SecurityConfiguration  {
     }
 
     @Bean
-    public ObjectMapper objectMapper() {
-        ObjectMapper objectMapper = new ObjectMapper();
-        JavaTimeModule javaTimeModule = new JavaTimeModule();
-
-        // Configuration of the date time format
-        javaTimeModule.addSerializer(LocalDateTime.class, new LocalDateTimeSerializer(DateTimeFormatter.ofPattern("yyyy:dd:MM HH:mm:ss")));
-        javaTimeModule.addDeserializer(LocalDateTime.class, new LocalDateTimeDeserializer(DateTimeFormatter.ofPattern("yyyy:dd:MM HH:mm:ss")));
-        objectMapper.registerModule(javaTimeModule);
-        return objectMapper;
-    }
-
-    @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
         http  .csrf().disable()
@@ -71,10 +59,22 @@ public class SecurityConfiguration  {
               .and()
               .authorizeHttpRequests()
               .requestMatchers("/api/auth/getUsers")
-              .hasAuthority("ADIM")
+              .hasAuthority("ADMIN")
               .anyRequest().authenticated();
         http.authenticationProvider(authenticationProvider());
         http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
+    }
+
+    @Bean
+    public ObjectMapper objectMapper() {
+        ObjectMapper objectMapper = new ObjectMapper();
+        JavaTimeModule javaTimeModule = new JavaTimeModule();
+
+        // Configuration of the date time format
+        javaTimeModule.addSerializer(LocalDateTime.class, new LocalDateTimeSerializer(DateTimeFormatter.ofPattern("yyyy:dd:MM HH:mm:ss")));
+        javaTimeModule.addDeserializer(LocalDateTime.class, new LocalDateTimeDeserializer(DateTimeFormatter.ofPattern("yyyy:dd:MM HH:mm:ss")));
+        objectMapper.registerModule(javaTimeModule);
+        return objectMapper;
     }
 }

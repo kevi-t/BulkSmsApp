@@ -13,12 +13,10 @@ import org.springframework.validation.annotation.Validated;
 @Builder
 @AllArgsConstructor
 public class RegistrationDTO {
-    @NotEmpty(message = "Field accountNumber should is empty")
-    private String accountNumber;
-    @NotEmpty(message = "Field phoneNumber should is empty")
-    private String phoneNumber;
-    @NotEmpty(message = "Field fullName should is empty")
-    private String fullName;
+    @NotEmpty(message = "Field username is empty")
+    private String username;
+    @NotEmpty(message = "Field email is empty")
+    private String email;
     @NotEmpty(message = "Field password is empty")
     private String password;
 }

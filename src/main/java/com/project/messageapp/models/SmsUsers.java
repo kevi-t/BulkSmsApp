@@ -1,17 +1,16 @@
 package com.project.messageapp.models;
 
+import com.project.messageapp.enums.UserRole;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.CreationTimestamp;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.Collections;
 
@@ -20,41 +19,27 @@ import java.util.Collections;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class Users implements UserDetails {
+public class SmsUsers implements UserDetails {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "user_seq_generator")
+    @SequenceGenerator(name="user_seq_generator", sequenceName="SEQ_USER_ID", allocationSize = 1)
     private Long userId;
-
     @NotNull
-    @Column(unique = true)
-    private String accountNumber;
-
+    private String userName;
     @NotNull
-    private String phoneNumber;
-
-    @NotNull
-    private String fullName;
-
-    private String email;
-
+    private String userEmail;
     @NotNull
     private String password;
-
     @Enumerated(EnumType.STRING)
     private UserRole userRole;
     private Boolean locked = false;
     private Boolean enabled = false;
-
-    @CreationTimestamp
-    @Column(updatable = false)
-    private LocalDateTime createdAt;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         SimpleGrantedAuthority authority = new SimpleGrantedAuthority(userRole.name());
         return Collections.singletonList(authority);
     }
-
 
     @Override
     public String getPassword() {
@@ -63,7 +48,7 @@ public class Users implements UserDetails {
 
     @Override
     public String getUsername() {
-        return accountNumber;
+        return userEmail;
     }
 
     @Override

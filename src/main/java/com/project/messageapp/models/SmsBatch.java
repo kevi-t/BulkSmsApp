@@ -1,6 +1,7 @@
 package com.project.messageapp.models;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -8,30 +9,29 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Entity
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class Batch {
+public class SmsBatch {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "batch_seq_generator")
+    @SequenceGenerator(name="batch_seq_generator", sequenceName="SEQ_BATCH_ID", allocationSize = 1)
     private Long batchId;
 
-    @Column(nullable = false)
-    private String messageDescription;
-
+    @NotNull
+    private String batchDescription;
+    @NotNull
     private Long userId;
-
+    @NotNull
     private String status;
 
 //    @OneToMany(mappedBy = "batch", cascade = CascadeType.ALL)
 //    private List<Message> messages;
 
     @CreationTimestamp
-    private LocalDateTime dateCreated;
-
+    private LocalDateTime creatDate;
     private LocalDateTime dateSent;
 }

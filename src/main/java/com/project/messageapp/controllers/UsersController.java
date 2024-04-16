@@ -6,7 +6,7 @@ import com.project.messageapp.responses.UniversalResponse;
 import com.project.messageapp.services.AuthenticationService;
 import com.project.messageapp.services.RegistrationService;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -16,16 +16,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/msgApp/")
+@AllArgsConstructor
 public class UsersController {
-
     private final RegistrationService registrationService;
     private final AuthenticationService authenticationService;
-
-    @Autowired
-    public UsersController(RegistrationService registrationService, AuthenticationService authenticationService) {
-        this.registrationService = registrationService;
-        this.authenticationService = authenticationService;
-    }
 
     @PostMapping("/register")
     public ResponseEntity<UniversalResponse> register(@RequestBody @Valid RegistrationDTO request)

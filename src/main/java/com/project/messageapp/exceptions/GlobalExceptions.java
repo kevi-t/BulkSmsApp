@@ -22,4 +22,5 @@ public class GlobalExceptions {
                 .status("1")
                 .build();
     }
+
 }

@@ -13,8 +13,8 @@ import org.springframework.validation.annotation.Validated;
 @Builder
 @AllArgsConstructor
 public class AuthenticationDTO {
-    @NotEmpty(message = "Field accountNumber should is empty")
-    private String accountNumber;
+    @NotEmpty(message = "Field email is empty")
+    private String email;
     @NotEmpty(message = "Field password is empty")
     private String password;
 }

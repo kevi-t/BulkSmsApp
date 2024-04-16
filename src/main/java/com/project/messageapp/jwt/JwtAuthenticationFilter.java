@@ -1,15 +1,11 @@
 package com.project.messageapp.jwt;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.project.messageapp.responses.UniversalResponse;
-import com.project.messageapp.utils.RequestContext;
-import com.project.messageapp.utils.SessionAlert;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.NonNull;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -22,45 +18,39 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
 
 @Component
+@AllArgsConstructor
 @Slf4j
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
-    private final JwtTokenService jwtTokenService;
+    private final JwtTokenUtil jwtTokenUtil;
     private final UserDetailsService userDetailsService;
-    private final SessionAlert msg = new SessionAlert();
-    @Autowired
-    public JwtAuthenticationFilter(JwtTokenService jwtTokenService, UserDetailsService userDetailsService) {
-        this.jwtTokenService = jwtTokenService;
-        this.userDetailsService = userDetailsService;
-    }
 
     @Override
-    protected void doFilterInternal(@NonNull HttpServletRequest request,@NonNull HttpServletResponse response,
-                                    @NonNull FilterChain filterChain) throws ServletException, IOException {
-
+    protected void doFilterInternal(@NonNull HttpServletRequest request,@NonNull HttpServletResponse response,@NonNull FilterChain filterChain) throws ServletException, IOException {
         if (request.getServletPath().equals("/api/msgApp/register")) {
             filterChain.doFilter(request, response);
         }
         else if (request.getServletPath().equals("/api/msgApp/login") ){
             filterChain.doFilter(request, response);
         }
+        else if (request.getServletPath().equals("/api/msgApp/sendFileMessage")) {
+            filterChain.doFilter(request, response);
+        }
         else {
-            String authorizationHeader = request.getHeader("Authorization");
-            String token = null;
-            String username = null;
 
+            // If the servlet path matches, continue with the filter chain
+            String authorizationHeader = request.getHeader("Authorization");
+            String token;
+            String username;
             if (authorizationHeader != null && authorizationHeader.startsWith("Bearer")) {
                 try {
-                    token = authorizationHeader.substring(7).trim();
-                    username = jwtTokenService.extractUsername(token);
-
-                    if(username != null && SecurityContextHolder.getContext().getAuthentication()==null){
+                    token = authorizationHeader.substring(7);
+                    username = jwtTokenUtil.extractUsername(token);
+                    if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
                         UserDetails userDetails = userDetailsService.loadUserByUsername(username);
-
-                        if (jwtTokenService.isTokenValid(token, userDetails)) {
-                            // Set the username in the RequestContext
-                            RequestContext.setUsername(username);
-
-                            UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(username, null,userDetails.getAuthorities());
+                        if (jwtTokenUtil.isTokenValid(token, userDetails)) {
+                            System.out.println("Het: "+token);
+                            System.out.println(userDetails);
+                            UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(username, null, userDetails.getAuthorities());
                             authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                             SecurityContextHolder.getContext().setAuthentication(authenticationToken);
                             filterChain.doFilter(request, response);
@@ -68,23 +58,22 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                     }
                 }
                 catch (Exception e) {
-                    log.info("exceptions " + e.getMessage());
-                    UniversalResponse errorResponse = msg.getSessionErrorMsg();
-                    String jsonResponse = new ObjectMapper().writeValueAsString(errorResponse); // Convert UniversalResponse to JSON
-                    response.setContentType("application/json;charset=UTF-8"); // Set response content type to JSON
-                    response.setStatus(HttpServletResponse.SC_OK); // Set response status to 200 OK
-                    response.getWriter().write(jsonResponse); // Write JSON response to the response writer
+                    log.error("Exception has1 occurred: " + e.getMessage());
+                    response.setStatus(HttpServletResponse.SC_UNAUTHORIZED); // Set HTTP 401 Unauthorized status
+                    response.getWriter().write("Unauthorized: " + e.getMessage());
+                }
+            }
+        }
 
-                }
-                finally {
-                    // Clear the RequestContext to avoid potential memory leaks
-                    RequestContext.clear();
-                }
-            }
-            else {
-                filterChain.doFilter(request, response);
-            }
 
         }
-    }
+//        else {
+//            HttpServletResponse httpResponse;
+//            httpResponse = response;
+//            httpResponse.setStatus(HttpServletResponse.SC_FORBIDDEN); // Set HTTP 403 Forbidden status
+//            httpResponse.getWriter().write("Access Denied: Invalid Servlet Path");
+//            log.info("HTTP Response status set to: {}", HttpServletResponse.SC_FORBIDDEN);
+//            return; // Stop further processing
+//        }
+
 }
