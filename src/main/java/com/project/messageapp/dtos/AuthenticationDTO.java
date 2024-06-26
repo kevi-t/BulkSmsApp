@@ -14,7 +14,7 @@ import org.springframework.validation.annotation.Validated;
 @AllArgsConstructor
 public class AuthenticationDTO {
     @NotEmpty(message = "Field email is empty")
-    private String email;
+    private String staffNo;
     @NotEmpty(message = "Field password is empty")
     private String password;
 }

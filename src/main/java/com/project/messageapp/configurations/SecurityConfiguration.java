@@ -55,7 +55,7 @@ public class SecurityConfiguration  {
               .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
               .and()
               .authorizeHttpRequests()
-              .requestMatchers("/api/msgApp/register","/api/msgApp/login").permitAll()
+              .requestMatchers("/api/msgApp/register","/api/msgApp/login","/api/msgApp/test").permitAll()
               .and()
               .authorizeHttpRequests()
               .requestMatchers("/api/auth/getUsers")

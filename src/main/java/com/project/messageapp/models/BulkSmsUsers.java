@@ -1,56 +1,64 @@
 package com.project.messageapp.models;
 
-import com.project.messageapp.enums.UserRole;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.time.LocalDate;
 import java.util.Collection;
-import java.util.Collections;
+import java.util.Date;
 
 @Entity
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class SmsUsers implements UserDetails {
+@Table(name = "BULK_SMS_USERS")
+public class BulkSmsUsers implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "user_seq_generator")
     @SequenceGenerator(name="user_seq_generator", sequenceName="SEQ_USER_ID", allocationSize = 1)
-    private Long userId;
-    @NotNull
-    private String userName;
-    @NotNull
-    private String userEmail;
-    @NotNull
+    @Column(name = "STAFF_ID", nullable = false)
+    private Long staffId;
+
+    @Column(name = "STAFF_NO", nullable = false, length = 25)
+    private String staffNo;
+
+    @Column(name = "FIRSTNAME", nullable = false, length = 25)
+    private String firstName;
+
+    @Column(name = "LASTNAME", nullable = false, length = 25)
+    private String lastName;
+
+    @Column(name = "EMAIL", nullable = false, length = 30)
+    private String email;
+
+    @Column(name = "CREATE_DATE")
+    @Temporal(TemporalType.DATE)
+    @CreationTimestamp
+    private LocalDate createDate;
+
+    @Column(name = "PASSWORD", nullable = false, length = 100)
     private String password;
-    @Enumerated(EnumType.STRING)
-    private UserRole userRole;
-    private Boolean locked = false;
-    private Boolean enabled = false;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        SimpleGrantedAuthority authority = new SimpleGrantedAuthority(userRole.name());
-        return Collections.singletonList(authority);
-    }
-
-    @Override
-    public String getPassword() {
-        return password;
+        return null;
     }
 
     @Override
     public String getUsername() {
-        return userEmail;
+        return staffNo;
     }
-
+    @Override
+    public String getPassword() {
+        return password;
+    }
     @Override
     public boolean isAccountNonExpired() {
         return true;

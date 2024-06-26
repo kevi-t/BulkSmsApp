@@ -1,75 +1,66 @@
 package com.project.messageapp.services;
 
-
-import com.project.messageapp.models.BulkSms;
-import com.project.messageapp.models.SmsBatch;
-import com.project.messageapp.repositories.BulkSmsRepository;
-import com.project.messageapp.repositories.SmsUsersRepository;
+import com.project.messageapp.dtos.MessageDTO;
+import com.project.messageapp.models.KplcBulkSms;
+import com.project.messageapp.models.KplcSmsBatch;
+import com.project.messageapp.repositories.BulkSmsUsersRepository;
+import com.project.messageapp.repositories.KplcBulkSmsRepository;
+import com.project.messageapp.repositories.KplcSmsBatchRepository;
 import com.project.messageapp.responses.UniversalResponse;
 import com.project.messageapp.utils.ReadFile;
 import com.project.messageapp.utils.RequestContext;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.List;
 
 @Service
 @AllArgsConstructor
+@Slf4j
 public class MessageService {
+    private final BulkSmsUsersRepository bulkSmsUsersRepository;
+    private final KplcSmsBatchRepository kplcSmsBatchRepository;
+    private final KplcBulkSmsRepository kplcBulkSmsRepository;
+    private final ReadFile readFile;
 
-    private final SmsUsersRepository smsUsersRepository;
-    private  final ReadFile readFile;
-    private final BulkSmsRepository bulkSmsRepository;
+    // Code to retrieve phone numbers fetched from a file and save to the database
+    public UniversalResponse sendFileMessage(String token, MessageDTO request) {
+        try {
+            List<String> phoneNumbers = readFile.readPhoneNumbersFromExcel();
 
-//    public UniversalResponse sendMessageToMultipleNumbers(String token, MessageDTO request) {
-//        try {
-//            Iterable<Users> users = usersRepository.findAll();
-//            String senderAccount = RequestContext.getUsername();
-//            Users senderUser = (Users) usersRepository.findUsersByUserEmail(senderAccount);
-//
-//            if (senderUser != null) {
-//                Long senderUserId = senderUser.getUserId();
-//                Batch batch = new Batch();
-//                batch.setDateCreated(LocalDateTime.now());
-//                batch.setMessageDescription(request.getMessageDescription());
-//                batch.setUserId(senderUserId);
-//                batch.setStatus("DRAFT");
-//                batchRepository.save(batch);
-//
-//            for (Users user : users) {
-//                String phoneNumber = user.getUsername();
-//
-//                Message msg = new Message();
-//                msg.setSenderAccountNumber(senderAccount);
-//                msg.setRecipientNumber(phoneNumber);
-//                msg.setMsg(request.getMessage());
-//                msg.setBatchId(batch.getBatchId()); // Set the associated batch for the message
-//                msg.setCreatedAt(LocalDateTime.now());
-//                msg.setStatus("DRAFT");
-//                messageRepository.save(msg);
-//
-//
-//            }
-//            return UniversalResponse.builder()
-//                    .message("Message sent successfully")
-//                    .status("0")
-//                    .build();
-//            }
-//            else {
-//                return UniversalResponse.builder()
-//                        .message("User Id not found")
-//                        .status("1")
-//                        .build();
-//            }
-//        }
-//        catch (Exception ex) {
-//            return UniversalResponse.builder()
-//                    .message("Error while sending the message")
-//                    .status("1")
-//                    .build();
-//        }
-//    }
-//
+            // Fetch the username from the RequestContext
+            String senderAccount = RequestContext.getUsername();
+
+            // Log the senderAccount to debug the null issue
+            log.info("Sender account: {}", senderAccount);
+            // Create the batch once outside the loop
+            KplcSmsBatch kplcSmsBatch = KplcSmsBatch.builder()
+                    .batchDescription(request.getBatchDescription())
+                    .staffNo(senderAccount)
+                    .createDate(new Date())
+                    .status("DRAFT")
+                    .build();
+            kplcSmsBatchRepository.save(kplcSmsBatch);
+
+            for (String phoneNumber : phoneNumbers) {
+                KplcBulkSms kplcBulkSms = KplcBulkSms.builder()
+                        .batchId(kplcSmsBatch.getBatchId())
+                        .messages(request.getMessage())
+                        .phoneNumber(phoneNumber)
+                        .createDate(new Date())
+                        .status("DRAFT")
+                        .build();
+                kplcBulkSmsRepository.save(kplcBulkSms);
+            }
+            return UniversalResponse.builder().message("Messages sent successfully").status("1").build();
+        }
+        catch (Exception ex) {
+            return UniversalResponse.builder().message("Error sending messages: " + ex.getMessage()).status("0").build();
+        }
+    }
+
 //    public UniversalResponse viewMessages(){
 //        List<Message> msgList= messageRepository.findAllByStatusOrderByCreatedAtDesc("DRAFT");
 //        if (msgList != null && !msgList.isEmpty()) {
@@ -114,29 +105,4 @@ public class MessageService {
 //                    .build();
 //        }
 //    }
-
-    public UniversalResponse sendFileMessage(String token, String msgText) {
-        try {
-            List<String> phoneNumbers = readFile.readPhoneNumbersFromExcel();
-            if (phoneNumbers.isEmpty()) {
-                return UniversalResponse.builder().message("No valid usernames found in the file").status("0").build();
-            }
-            String senderAccount = RequestContext.getUsername();
-            var userId = smsUsersRepository.findSmsUsersByUserEmail(senderAccount).getUserId();
-
-            for (String phoneNumber : phoneNumbers) {
-                BulkSms bulkSms = new BulkSms();
-                SmsBatch smsBatch = new SmsBatch();
-                bulkSms.setUserId(userId);
-                bulkSms.setMessages(msgText);
-                bulkSms.setStatus("DRAFT");
-                bulkSmsRepository.save(bulkSms);
-
-            }
-            return UniversalResponse.builder().message("Message sent successfully").status("0").build();
-        }
-        catch (Exception ex) {
-            return UniversalResponse.builder().message("Error sending messages: " + ex.getMessage()).status("0").build();
-        }
-    }
 }

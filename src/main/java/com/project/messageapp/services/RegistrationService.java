@@ -1,9 +1,8 @@
 package com.project.messageapp.services;
 
 import com.project.messageapp.dtos.RegistrationDTO;
-import com.project.messageapp.enums.UserRole;
-import com.project.messageapp.models.SmsUsers;
-import com.project.messageapp.repositories.SmsUsersRepository;
+import com.project.messageapp.models.BulkSmsUsers;
+import com.project.messageapp.repositories.BulkSmsUsersRepository;
 import com.project.messageapp.responses.UniversalResponse;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -14,19 +13,25 @@ import org.springframework.stereotype.Service;
 @AllArgsConstructor
 @Slf4j
 public class RegistrationService {
-    private final SmsUsersRepository smsUsersRepository;
+    private  final BulkSmsUsersRepository bulkSmsUsersRepository;
     private final PasswordEncoder passwordEncoder;
 
     public UniversalResponse register(RegistrationDTO request) {
         try{
-            if (smsUsersRepository.findSmsUsersByUserEmail(request.getEmail()) != null) {
+            if (bulkSmsUsersRepository.findBulkSmsUsersByEmail(request.getEmail()) != null) {
                 String email = request.getEmail();
                 return UniversalResponse.builder().message("User with email"+" "+email+ " "+ "exists login").status("0").build();
             }
             else {
-                var user = SmsUsers.builder().userName(request.getUsername()).userEmail(request.getEmail()).password(passwordEncoder.encode(request.getPassword())).userRole(UserRole.ADMIN).enabled(true).locked(false).build();
-                smsUsersRepository.save(user);
-                return UniversalResponse.builder().message("Registration successful").status("0").build();
+                var user = BulkSmsUsers.builder().
+                        staffNo(request.getStaffNo()).
+                        firstName(request.getFirstName()).
+                        lastName(request.getLastName()).
+                        email(request.getEmail()).
+                        password(passwordEncoder.encode(request.getPassword())).
+                        build();
+               bulkSmsUsersRepository.save(user);
+               return UniversalResponse.builder().message("Registration successful").status("0").build();
             }
         }
         catch (Exception e){

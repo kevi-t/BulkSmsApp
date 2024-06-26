@@ -2,8 +2,8 @@ package com.project.messageapp.services;
 
 import com.project.messageapp.dtos.AuthenticationDTO;
 import com.project.messageapp.jwt.JwtTokenUtil;
-import com.project.messageapp.models.SmsUsers;
-import com.project.messageapp.repositories.SmsUsersRepository;
+import com.project.messageapp.models.BulkSmsUsers;
+import com.project.messageapp.repositories.BulkSmsUsersRepository;
 import com.project.messageapp.responses.UniversalResponse;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -21,19 +21,19 @@ import org.springframework.stereotype.Service;
 public class AuthenticationService {
     private final JwtTokenUtil jwtTokenUtil;
     private final AuthenticationManager authenticationManager;
-    private final SmsUsersRepository smsUsersRepository;
+    private final BulkSmsUsersRepository bulkSmsUsersRepository;
 
     public UniversalResponse login(AuthenticationDTO request) {
         try {
-            SmsUsers user = smsUsersRepository.findSmsUsersByUserEmail(request.getEmail());
+            BulkSmsUsers user = bulkSmsUsersRepository.findBulkSmsUsersByStaffNo(request.getStaffNo());
             if (user == null) {
                 return UniversalResponse.builder().message("User not found please register").status("0").build();
             }
             else {
                 try {
-                    Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
+                    Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.getStaffNo(), request.getPassword()));
                     SecurityContextHolder.getContext().setAuthentication(authentication);
-                    var jwtToken = jwtTokenUtil.generateToken((SmsUsers) authentication.getPrincipal());
+                    var jwtToken = jwtTokenUtil.generateToken((BulkSmsUsers) authentication.getPrincipal());
                     return UniversalResponse.builder().message("login successful").status("0").data(jwtToken).build();
                 }
                 catch (AuthenticationException e) {

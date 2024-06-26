@@ -15,10 +15,7 @@ import org.springframework.web.bind.annotation.*;
 @AllArgsConstructor
 public class MessageController {
     private final MessageService messageService;
-    @GetMapping("/test")
-    public String Test(){
-        return "connected";
-    }
+
    // private final CustomMessageService customMessageService;
 
 //    @Autowired
@@ -51,7 +48,7 @@ public class MessageController {
     @PostMapping("/sendFileMessage")
     public ResponseEntity<UniversalResponse> sendFileMessages(@RequestBody MessageDTO request, @RequestHeader("Authorization") String token) {
         try {
-            return ResponseEntity.ok( messageService.sendFileMessage(token,request.getMessage()));
+            return ResponseEntity.ok( messageService.sendFileMessage(token,request));
         }
         catch (Exception exception){
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
