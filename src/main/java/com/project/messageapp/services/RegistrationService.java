@@ -3,6 +3,7 @@ package com.project.messageapp.services;
 import com.project.messageapp.dtos.RegistrationDTO;
 import com.project.messageapp.models.BulkSmsUsers;
 import com.project.messageapp.repositories.BulkSmsUsersRepository;
+import com.project.messageapp.repositories.KplcSmsBatchRepository;
 import com.project.messageapp.responses.UniversalResponse;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -15,11 +16,13 @@ import org.springframework.stereotype.Service;
 public class RegistrationService {
     private  final BulkSmsUsersRepository bulkSmsUsersRepository;
     private final PasswordEncoder passwordEncoder;
+    private final KplcSmsBatchRepository kplcSmsBatchRepository;
 
     public UniversalResponse register(RegistrationDTO request) {
         try{
             if (bulkSmsUsersRepository.findBulkSmsUsersByEmail(request.getEmail()) != null) {
                 String email = request.getEmail();
+                System.out.println(kplcSmsBatchRepository.findAll());
                 return UniversalResponse.builder().message("User with email"+" "+email+ " "+ "exists login").status("0").build();
             }
             else {
